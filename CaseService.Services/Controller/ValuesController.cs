@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CaseService
+namespace other_case_service.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
