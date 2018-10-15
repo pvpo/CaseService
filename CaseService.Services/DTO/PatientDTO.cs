@@ -1,4 +1,4 @@
-namespace other_case_service.DTO
+namespace CaseService.Services.DTO
 {
     public class PatientDTO {
         public string AccessionID { get; set; }

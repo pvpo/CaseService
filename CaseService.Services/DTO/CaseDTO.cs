@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace other_case_service.DTO
+namespace CaseService.Services.DTO
 {
     public class CaseDTO {
 

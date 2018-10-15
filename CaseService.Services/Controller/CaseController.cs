@@ -1,8 +1,8 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
-using other_case_service.DTO;
+using CaseService.Services.DTO;
 
-namespace other_case_service.Controller
+namespace CaseService.Services.Controller
 {
     [Route("api/v1/[controller]")]
     [ApiController]
