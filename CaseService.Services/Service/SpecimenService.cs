@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using CaseService.Services.Data.Repository;
 using CaseService.Services.Domain;
 using CaseService.Services.DTO;
@@ -14,10 +17,16 @@ namespace CaseService.Services.Service {
             specimenFactory = new SpecimenFactory();
         }
 
-        public Specimen createAndPersist(SpecimenDTO dto) {
+        public Specimen createAndPersistAsync(SpecimenDTO dto) {
             Specimen result = specimenFactory.create(dto);
+
             Document doc = specimenRepository.Save(result);
-            return result;
+            return specimenFactory.create(doc);
+        }
+
+        public async Task<List<Specimen>> ListAllAsync() {
+            return await specimenRepository.ListAllAsync();
         }
     }
+
 }

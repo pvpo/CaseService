@@ -4,6 +4,8 @@ using CaseService.Services.DTO;
 using CaseService.Services.Data.Repository;
 using CaseService.Services.Domain;
 using CaseService.Services.Service;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace CaseService.Services.Controller
 {
@@ -20,8 +22,12 @@ namespace CaseService.Services.Controller
         [HttpPost]
         public Specimen Post(SpecimenDTO value)
         {
-            Console.WriteLine(value.ProtocolName);
-            return specimenService.createAndPersist(value);
+            return specimenService.createAndPersistAsync(value);
+        }
+
+        [HttpGet]
+        public Task<List<Specimen>> Get() {
+            return specimenService.ListAllAsync();
         }
 
     }
