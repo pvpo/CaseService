@@ -1,4 +1,5 @@
 using Microsoft.Azure.Documents;
+using Newtonsoft.Json;
 
 namespace CaseService.Services.Domain {
     public class BaseDomainObject: Document {
@@ -7,6 +8,5 @@ namespace CaseService.Services.Domain {
         public BaseDomainObject(string collectionName) => cName = collectionName;
 
         public string GetCollectionName() => cName;
-
     }
 }

@@ -1,12 +1,15 @@
 using System;
+using System.Collections.Generic;
 using CaseService.Services.Domain;
 using CaseService.Services.DTO;
 using Microsoft.Azure.Documents;
 
 namespace CaseService.Services.Factory {
-    public class SpecimenFactory {
+    public class SpecimenFactory : SingletonBase<SpecimenFactory> {
 
-        public Specimen create(SpecimenDTO dto) {
+        private SpecimenFactory () { }
+
+        public Specimen create(CreateSpecimenDTO dto) {
             Specimen result = new Specimen();
             
             result.SpecimenId = dto.SpecimenId;
@@ -28,6 +31,7 @@ namespace CaseService.Services.Factory {
             result.ProtocolNumber = doc.GetPropertyValue<long>("ProtocolNumber");
             result.ProtocolName = doc.GetPropertyValue<string>("ProtocolName");
             result.ProtocolDescription = doc.GetPropertyValue<string>("ProtocolDescription");
+            result.Id = doc.GetPropertyValue<string>("id");
 
             return result;
         }
@@ -41,6 +45,17 @@ namespace CaseService.Services.Factory {
             result.ProtocolNumber = doc.GetPropertyValue<long>("ProtocolNumber");
             result.ProtocolName = doc.GetPropertyValue<string>("ProtocolName");
             result.ProtocolDescription = doc.GetPropertyValue<string>("ProtocolDescription");
+            result.Id = doc.GetPropertyValue<string>("id");
+
+            return result;
+        }
+
+        public List<SpecimenDTO> create(List<Specimen> specimens) {
+            List<SpecimenDTO> result = new List<SpecimenDTO>();
+
+            foreach(Specimen sp in specimens) {
+                result.Add(createDTO(sp));
+            }
 
             return result;
         }

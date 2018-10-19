@@ -13,19 +13,32 @@ namespace CaseService.Services.Service {
         private readonly SpecimenFactory specimenFactory;
 
         public SpecimenService() {
-            specimenRepository = new SpecimenRepository();
-            specimenFactory = new SpecimenFactory();
+            specimenRepository = SpecimenRepository.Instance;
+            specimenFactory = SpecimenFactory.Instance;
         }
 
-        public Specimen createAndPersistAsync(SpecimenDTO dto) {
+        public Specimen createAndPersistAsync(CreateSpecimenDTO dto) {
             Specimen result = specimenFactory.create(dto);
+            Document document = specimenRepository.Save(result);
+            return specimenFactory.create(document);
+        }
 
-            Document doc = specimenRepository.Save(result);
-            return specimenFactory.create(doc);
+        public SpecimenDTO createAndPersistDTOAsync(CreateSpecimenDTO dto) {
+            Specimen result = specimenFactory.create(dto);
+            Document document = specimenRepository.Save(result);
+            return specimenFactory.createDTO(document);
         }
 
         public async Task<List<Specimen>> ListAllAsync() {
             return await specimenRepository.ListAllAsync();
+        }
+
+        public async Task<List<SpecimenDTO>> ListAllDTOAsync() {
+            return specimenFactory.create(await specimenRepository.ListAllAsync());
+        }
+
+        public SpecimenDTO GetById(string id) {
+            return specimenFactory.createDTO(specimenRepository.findByIdAsync(id).Result);
         }
     }
 

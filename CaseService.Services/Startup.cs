@@ -39,6 +39,9 @@ namespace CaseService
 
             IServiceProvider provider = services.BuildServiceProvider();
             services.AddSingleton<SpecimenService>(new SpecimenService());
+            services.AddSingleton<Services.Service.CaseService>(new Services.Service.CaseService());
+            services.AddSingleton<PatientService>(new PatientService());
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

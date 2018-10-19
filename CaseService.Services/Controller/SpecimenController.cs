@@ -20,15 +20,17 @@ namespace CaseService.Services.Controller
         }
 
         [HttpPost]
-        public Specimen Post(SpecimenDTO value)
+        public SpecimenDTO Post(CreateSpecimenDTO value)
         {
-            return specimenService.createAndPersistAsync(value);
+            return specimenService.createAndPersistDTOAsync(value);
         }
 
         [HttpGet]
-        public Task<List<Specimen>> Get() {
-            return specimenService.ListAllAsync();
-        }
+        public Task<List<SpecimenDTO>> GetAll() => specimenService.ListAllDTOAsync();
+
+        [Route("{id}")]
+        [HttpGet]
+        public SpecimenDTO GetById(string id) => specimenService.GetById(id);
 
     }
 }

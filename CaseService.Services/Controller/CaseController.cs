@@ -1,6 +1,10 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using CaseService.Services.DTO;
+using CaseService.Services.Service;
+using CaseService.Services.Domain;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace CaseService.Services.Controller
 {
@@ -9,11 +13,23 @@ namespace CaseService.Services.Controller
     public class CaseController : ControllerBase
     {
 
-        [HttpPost]
-        public void Post(CaseDTO value)
-        {
-            Console.WriteLine(value.Specimens.Count);
+        private readonly Services.Service.CaseService caseService;
+
+        public CaseController(Services.Service.CaseService cs) {
+            caseService = cs;
         }
+
+        [HttpPost]
+        public Case Post(CreateCaseDTO value)
+        {
+            return caseService.createAndPersistAsync(value);
+        }
+
+        [HttpGet]
+        public List<CaseDTO> Get() {
+            return caseService.ListAllDTOAsync();
+        }
+
 
     }
 }
