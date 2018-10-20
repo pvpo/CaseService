@@ -546,6 +546,7 @@ SELECT SQL_NO_CACHE DISTINCT
                         }
                     } else if(main_id === '#create-report') {
                         window.editor.refresh();
+                        list_cases_done = false;
                         $(main_id).show();
                     } else {
                         list_cases_done = false;
@@ -597,7 +598,6 @@ SELECT SQL_NO_CACHE DISTINCT
                         $('#all_cases_table tbody').html(tbody);
                         feather.replace();
                         $('main').hide(function() {
-                            console.warn('list all cases')
                             $('#list-cases').show();
                         });
                     },
