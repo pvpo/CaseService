@@ -36,6 +36,12 @@ namespace CaseService.Services.Controller
             return caseService.GetById(id);
         }
 
+        [HttpDelete]
+        [Route("{id}")]
+        public bool DeleteById(String id) {
+            caseService.DeleteById(id);
+            return true;
+        }
 
     }
 }

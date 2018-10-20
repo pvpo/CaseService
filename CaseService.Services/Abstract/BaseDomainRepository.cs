@@ -65,11 +65,15 @@ namespace CaseService.Services.Abstract.Data {
                 results.AddRange(await queryAll.ExecuteNextAsync<T>());
             }
         
-            Console.WriteLine("!!!!!!!!!!!!!!");
-            Console.WriteLine(JsonConvert.SerializeObject(results));
-
             return results;
+        }
 
+        public void DeleteById(string id) {
+            DocumentClient _client = DBInitializer.documentClient;
+            DocumentCollection col = DBInitializer.collections[GetCollectionName()];
+            var docLink = "dbs/" + Configuration.Persistence.dbName + "/colls/" + GetCollectionName() + "/docs/" + id;
+            Console.WriteLine("Deleting from: " + GetCollectionName() + " ID: " + id);
+            _client.DeleteDocumentAsync(docLink);
         }
 
         protected abstract string GetCollectionName();

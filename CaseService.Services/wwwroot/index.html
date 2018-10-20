@@ -41,7 +41,7 @@
                     </a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="#list-case">
+                    <a class="nav-link" href="#list-cases">
                         <span data-feather="list"></span>
                         List Cases
                     </a>
@@ -433,6 +433,25 @@
                     </div>
                 </div>
             </main>
+            <main role="main" id="list-cases" style="display:none;" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+                <h1>List All Cases</h1>
+                <hr>
+                <div class="table-responsive">
+                    <table id="all_cases_table" class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Requestor</th>
+                                <th>Patient</th>
+                                <th>View</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
         </div>
     </div>
 
@@ -474,6 +493,7 @@
                 }
             }
         });
+        var list_cases_done = false;
 
         var change_main = function(main_id) {
             console.info("Chainging main to: " + main_id)
@@ -481,7 +501,74 @@
                 $('nav a').removeClass('active');
                 $("[href='" + main_id + "']").addClass('active');
                 $('main').hide(function() {
-                    $(main_id).show();
+                    if(main_id === '#list-cases') {
+                        if(!list_cases_done) {
+                            list_cases();
+                        }
+                    } else {
+                        list_cases_done = false;
+                        $(main_id).show();
+                    }
+                });
+            }
+        }
+
+        var list_cases = function() {
+            list_cases_done = true;
+            $('main').hide(function() {
+                $('#loading').show();
+            });
+            
+            console.info('Listing all cases.');
+            if($('#all_cases_table tbody td').length === 0) {
+                $.ajax({
+                    type: "GET",
+                    url: "/api/v1/Case/",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data, status, jqXHR) {
+                        var tbody = "";
+                        for(var i in data) {
+                            var c = data[i];
+                            
+                            var requestorTd = "";
+                            var patientTd = "";
+
+                            if(c.Requestor) {
+                                requestorTd = c.Requestor.FirstName + " " + c.Requestor.LastName;
+                            }
+
+                            if(c.Patient) {
+                                patientTd = c.Patient.FirstName + " " + c.Patient.LastName;
+                            }
+
+                            tbody += 
+                            "<tr>" +
+                                "<td>" + c.Id + "</td>" +
+                                "<td>" + requestorTd + "</td>" +
+                                "<td>" + patientTd + "</td>" +
+                                "<td><a class=\"view_case\" href=\"" + c.Id + "\"><i data-feather=\"eye\"></i></a></td>" +
+                                "<td><a class=\"delete_case\" href=\"" + c.Id + "\"><i data-feather=\"delete\"></i></a></td>" +
+                            "</tr>";
+                        }
+
+                        $('#all_cases_table tbody').html(tbody);
+                        feather.replace();
+                        $('main').hide(function() {
+                            $('#list-cases').show();
+                        });
+                    },
+                    error: function (jqXHR, status) {
+                        // error handler
+                        console.log(jqXHR);
+                        alert('fail: ' + status.code);
+                    }
+                }); 
+            } else {
+                $('main').hide(function() {
+                    setTimeout(function() {
+                        $('#list-cases').show();
+                    }, 1000)
                 });
             }
         }
@@ -495,22 +582,28 @@
                 success: function (data, status, jqXHR) {
                     $('#view_case_id').text(data.Id)
 
-                    $('#patient_system_id').text(data.Patient.Id);
-                    $('#patient_first_name').text(data.Patient.FirstName);
-                    $('#patient_last_name').text(data.Patient.LastName);
-                    $('#patient_accession_id').text(data.Patient.AccessionID);
-                    $('#patient_id').text(data.Patient.PatientId);
+                    if(data.Patient != null) {
 
-                    $('#requestor_system_id').text(data.Requestor.Id);
-                    $('#requestor_first_name').text(data.Requestor.FirstName);
-                    $('#requestor_last_name').text(data.Requestor.LastName);
-                    $('#requestor_email').text(data.Requestor.Email);
-                    $('#requestor_mobile').text(data.Patient.Mobile);
+                        $('#patient_system_id').text(data.Patient.Id);
+                        $('#patient_first_name').text(data.Patient.FirstName);
+                        $('#patient_last_name').text(data.Patient.LastName);
+                        $('#patient_accession_id').text(data.Patient.AccessionID);
+                        $('#patient_id').text(data.Patient.PatientId);
+                    }
 
-                    var tbody = ""
+                    if(data.Requestor != null) {
+                        $('#requestor_system_id').text(data.Requestor.Id);
+                        $('#requestor_first_name').text(data.Requestor.FirstName);
+                        $('#requestor_last_name').text(data.Requestor.LastName);
+                        $('#requestor_email').text(data.Requestor.Email);
+                        $('#requestor_mobile').text(data.Patient.Mobile);
+                    }
+
+                    var tbody = "";
+                    var casesCount = 0;
                     for(var i in data.Specimens) {
                         var Specimen = data.Specimens[i];
-
+                        casesCount++;
                         tbody +=
                         "<tr>" +
                             "<td class=\"specimenId\">" + Specimen.Id + "</td>" +
@@ -644,6 +737,37 @@
                 e.preventDefault();
                 return false;
             });
+
+            $('#all_cases_table tbody').on('click', '.view_case', function(e) {
+                location.hash = 'loading';
+                view_case($(this).attr('href'));
+                e.preventDefault();
+                return false;
+            })
+
+            $('#all_cases_table tbody').on('click', '.delete_case', function(e) {
+                var $this = $(this);
+                $.ajax({
+                    type: "DELETE",
+                    url: "/api/v1/Case/" + $(this).attr('href'),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data, status, jqXHR) {
+                        var td = $this.parent().parent();
+                        td.fadeOut(function() {
+                            td.remove();
+                        });
+                    },
+                    error: function (jqXHR, status) {
+                        // error handler
+                        console.log(jqXHR);
+                        alert('fail: ' + status.code);
+                    }
+                });
+
+                e.preventDefault();
+                return false;
+            })
         })
 
         $(window).on('hashchange', function(e){

@@ -80,17 +80,36 @@ namespace CaseService.Services.Service {
 
             caseDTO.Id = c.Id;
 
-            if(c.RequestorId != null && c.RequestorId != "") {
-                RequestorDTO r = requestorFactory.createDTO(requestorRepository.findByIdAsync(c.RequestorId).Result);
-                caseDTO.Requestor = requestorFactory.createDTO(requestorRepository.findByIdAsync(c.RequestorId).Result);
+            try {
+                if(c.RequestorId != null && c.RequestorId != "") {
+                    RequestorDTO r = requestorFactory.createDTO(requestorRepository.findByIdAsync(c.RequestorId).Result);
+                    caseDTO.Requestor = requestorFactory.createDTO(requestorRepository.findByIdAsync(c.RequestorId).Result);
+                }
+            } catch(DocumentClientException e) {
+                Console.WriteLine(e.Message);
+            } catch (AggregateException e) {   
+                Console.WriteLine(e.Message);
             }
 
-            if(c.PatientId != null && c.PatientId != "") {
-                caseDTO.Patient = patientFactory.createDTO(patientRepository.findByIdAsync(c.PatientId).Result);
+            try {
+                if(c.PatientId != null && c.PatientId != "") {
+                    caseDTO.Patient = patientFactory.createDTO(patientRepository.findByIdAsync(c.PatientId).Result);
+                }
+            } catch(DocumentClientException e) {
+                Console.WriteLine(e.Message);
+            } catch (AggregateException e) {   
+                Console.WriteLine(e.Message);
             }
 
-            if(c.Specimens != null) {
-                caseDTO.Specimens = specimenFactory.create(specimenRepository.ListAsync(c.Specimens).Result);
+
+            try {
+                if(c.Specimens != null) {
+                    caseDTO.Specimens = specimenFactory.create(specimenRepository.ListAsync(c.Specimens).Result);
+                }
+            } catch(DocumentClientException e) {
+                Console.WriteLine(e.Message);
+            } catch (AggregateException e) {   
+                Console.WriteLine(e.Message);
             }
 
             return caseDTO;
@@ -98,6 +117,19 @@ namespace CaseService.Services.Service {
 
         public CaseDTO GetById(string id) {
             return GetCaseDTO(caseFactory.create(caseRepository.findByIdAsync(id).Result));
+        }
+
+        public void DeleteById(string id) {
+            Case c = caseFactory.create(caseRepository.findByIdAsync(id).Result);
+
+            requestorRepository.DeleteById(c.RequestorId);
+            patientRepository.DeleteById(c.PatientId);
+
+            foreach(string sID in c.Specimens) {
+                specimenRepository.DeleteById(sID);
+            }
+
+            caseRepository.DeleteById(id);
         }
 
     }
