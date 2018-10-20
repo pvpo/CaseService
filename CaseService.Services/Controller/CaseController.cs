@@ -30,6 +30,12 @@ namespace CaseService.Services.Controller
             return caseService.ListAllDTOAsync();
         }
 
+        [HttpGet]
+        [Route("{id}")]
+        public CaseDTO GetById(String id) {
+            return caseService.GetById(id);
+        }
+
 
     }
 }

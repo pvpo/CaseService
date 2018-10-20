@@ -41,6 +41,7 @@ namespace CaseService
             services.AddSingleton<SpecimenService>(new SpecimenService());
             services.AddSingleton<Services.Service.CaseService>(new Services.Service.CaseService());
             services.AddSingleton<PatientService>(new PatientService());
+            services.AddSingleton<RequestorService>(new RequestorService());
 
         }
 

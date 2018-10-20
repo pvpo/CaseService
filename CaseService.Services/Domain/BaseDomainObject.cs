@@ -8,5 +8,10 @@ namespace CaseService.Services.Domain {
         public BaseDomainObject(string collectionName) => cName = collectionName;
 
         public string GetCollectionName() => cName;
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 }

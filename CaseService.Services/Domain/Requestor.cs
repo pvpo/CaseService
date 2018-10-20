@@ -1,12 +1,10 @@
 using Newtonsoft.Json;
 
-namespace CaseService.Services.DTO
-{
-    public class RequestorDTO {
+namespace CaseService.Services.Domain {
+    public class Requestor : BaseDomainObject {
 
-
-        [JsonProperty(PropertyName = "Id")]
-        public string Id { get; set; }
+        public static readonly string collectionName = "Requestor";
+        public Requestor() : base(collectionName) {  }
 
         [JsonProperty(PropertyName = "FirstName")]
         public string FirstName { get; set; }
@@ -20,5 +18,4 @@ namespace CaseService.Services.DTO
         [JsonProperty(PropertyName = "Mobile")]
         public string Mobile { get; set; }
     }
-
 }

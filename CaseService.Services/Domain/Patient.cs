@@ -1,18 +1,18 @@
 using Newtonsoft.Json;
 
-namespace CaseService.Services.DTO
-{
-    public class PatientDTO {
+namespace CaseService.Services.Domain {
+    public class Patient : BaseDomainObject {
 
-        [JsonProperty(PropertyName = "Id")]
-        public string Id { get; set; }
+        public static readonly string collectionName = "Patient";
+
+        public Patient() : base(collectionName) {  }
 
         [JsonProperty(PropertyName = "AccessionID")]
         public string AccessionID { get; set; }
 
         [JsonProperty(PropertyName = "FirstName")]
         public string FirstName { get; set; }
-
+        
         [JsonProperty(PropertyName = "LastName")]
         public string LastName { get; set; }
 
