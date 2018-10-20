@@ -597,6 +597,7 @@ SELECT SQL_NO_CACHE DISTINCT
                         $('#all_cases_table tbody').html(tbody);
                         feather.replace();
                         $('main').hide(function() {
+                            console.warn('list all cases')
                             $('#list-cases').show();
                         });
                     },
