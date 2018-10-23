@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CaseService.Services.Controller {
 
+
     [Route("api/v1/[controller]")]
     [ApiController]
     public class RequestorController {

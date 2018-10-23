@@ -19,8 +19,7 @@ namespace CaseService.Services.Abstract.Data {
         }
 
 
-        public async Task<List<T>> ListAllAsync()
-        {
+        public async Task<List<T>> ListAllAsync() {
         
             DocumentClient _client = DBInitializer.documentClient;
             DocumentCollection col = DBInitializer.collections[GetCollectionName()];

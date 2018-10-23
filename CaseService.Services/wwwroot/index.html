@@ -13,24 +13,61 @@
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+
         <script src="js/lib/codemirror.js"></script>
         <script src="js/lib/matchbrackets.js"></script>
         <script src="js/lib/sql.js"></script>
         <script src="js/lib/show-hint.js"></script>
         <script src="js/lib/sql-hint.js"></script>
         <script src="js/lib/autorefresh.js"></script>
+        <script src="js/init.js"></script>
+        <script src="js/functions.js"></script>
+        <script src="js/events.js"></script>
 
         <title>Case Service</title>
     </head>
     <body>
-    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Roche</a>
-        <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
-        <ul class="navbar-nav px-3">
-        <li class="nav-item text-nowrap">
-            <a class="nav-link" href="#">Sign out</a>
-        </li>
-        </ul>
+    <nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0" style="height:100px;">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" style="position:relative;" href="#"><img class="child" width="100px" src="https://seeklogo.com/images/R/Roche-logo-A80FCF9553-seeklogo.com.png" alt="Roche"></a>
+        <div class="bg-dark" >
+            <input class="hide-mobile form-control form-control-dark" type="text" placeholder="Search" aria-label="Search">
+            <ul class="navbar-nav px-3">
+
+                <li class="show-mobile nav-item text-nowrap">
+                    <a id="responsive-menu" class="nav-link" href="#">
+                            <span data-feather="menu"></span>
+                            Menu <span class="sr-only"></span>
+                    </a>
+                </li>
+
+                <li class="nav-item text-nowrap">
+                    <a class="nav-link" href="#">
+                            <span data-feather="log-out"></span>
+                            Sign out <span class="sr-only"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link show-mobile" href="#dashboard">
+                        <span data-feather="home"></span>
+                        Dashboard <span class="sr-only">(current)</span>
+                    </a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link show-mobile" href="#create-case">
+                        <span data-feather="file"></span>
+                        Create Case
+                    </a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link show-mobile" href="#list-cases">
+                        <span data-feather="list"></span>
+                        List Cases
+                    </a>
+                    </li>
+            </ul>
+        </div>
     </nav>
 
     <div class="container-fluid">
@@ -493,354 +530,5 @@ SELECT SQL_NO_CACHE DISTINCT
             </main>
         </div>
     </div>
-
-
-
-    <!-- Icons -->
-    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-    <script>
-        feather.replace()
-    </script>
-
-    <!-- Graphs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
-    <script>
-        var ctx = document.getElementById("myChart");
-        var myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-                datasets: [{
-                    data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                    lineTension: 0,
-                    backgroundColor: 'transparent',
-                    borderColor: '#007bff',
-                    borderWidth: 4,
-                    pointBackgroundColor: '#007bff'
-                }]
-            },
-            options: {
-                scales: {
-                yAxes: [{
-                    ticks: {
-                    beginAtZero: false
-                    }
-                }]
-                },
-                legend: {
-                display: false,
-                }
-            }
-        });
-        var list_cases_done = false;
-
-        var change_main = function(main_id) {
-            console.info("Chainging main to: " + main_id)
-            if(!$("[href='" + main_id + "']").hasClass('active')) {
-                $('nav a').removeClass('active');
-                $("[href='" + main_id + "']").addClass('active');
-                $('main').hide(function() {
-                    if(main_id === '#list-cases') {
-                        if(!list_cases_done) {
-                            list_cases();
-                        }
-                    } else if(main_id === '#create-report') {
-                        window.editor.refresh();
-                        list_cases_done = false;
-                        $(main_id).show();
-                    } else {
-                        list_cases_done = false;
-                        $(main_id).show();
-                    }
-                });
-            }
-        }
-
-        var list_cases = function() {
-            list_cases_done = true;
-            $('main').hide(function() {
-                $('#loading').show();
-            });
-            
-            console.info('Listing all cases.');
-            if($('#all_cases_table tbody td').length === 0) {
-                $.ajax({
-                    type: "GET",
-                    url: "/api/v1/Case/",
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (data, status, jqXHR) {
-                        var tbody = "";
-                        for(var i in data) {
-                            var c = data[i];
-                            
-                            var requestorTd = "";
-                            var patientTd = "";
-
-                            if(c.Requestor) {
-                                requestorTd = c.Requestor.FirstName + " " + c.Requestor.LastName;
-                            }
-
-                            if(c.Patient) {
-                                patientTd = c.Patient.FirstName + " " + c.Patient.LastName;
-                            }
-
-                            tbody += 
-                            "<tr>" +
-                                "<td>" + c.Id + "</td>" +
-                                "<td>" + requestorTd + "</td>" +
-                                "<td>" + patientTd + "</td>" +
-                                "<td><a class=\"view_case\" href=\"" + c.Id + "\"><i data-feather=\"eye\"></i></a></td>" +
-                                "<td><a class=\"delete_case\" href=\"" + c.Id + "\"><i data-feather=\"delete\"></i></a></td>" +
-                            "</tr>";
-                        }
-
-                        $('#all_cases_table tbody').html(tbody);
-                        feather.replace();
-                        $('main').hide(function() {
-                            $('#list-cases').show();
-                        });
-                    },
-                    error: function (jqXHR, status) {
-                        // error handler
-                        console.log(jqXHR);
-                        alert('fail: ' + status.code);
-                    }
-                }); 
-            } else {
-                $('main').hide(function() {
-                    setTimeout(function() {
-                        $('#list-cases').show();
-                    }, 1000)
-                });
-            }
-        }
-
-        var view_case = function(case_id) {
-            $.ajax({
-                type: "GET",
-                url: "/api/v1/Case/" + case_id,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (data, status, jqXHR) {
-                    $('#view_case_id').text(data.Id)
-
-                    if(data.Patient != null) {
-
-                        $('#patient_system_id').text(data.Patient.Id);
-                        $('#patient_first_name').text(data.Patient.FirstName);
-                        $('#patient_last_name').text(data.Patient.LastName);
-                        $('#patient_accession_id').text(data.Patient.AccessionID);
-                        $('#patient_id').text(data.Patient.PatientId);
-                    }
-
-                    if(data.Requestor != null) {
-                        $('#requestor_system_id').text(data.Requestor.Id);
-                        $('#requestor_first_name').text(data.Requestor.FirstName);
-                        $('#requestor_last_name').text(data.Requestor.LastName);
-                        $('#requestor_email').text(data.Requestor.Email);
-                        $('#requestor_mobile').text(data.Patient.Mobile);
-                    }
-
-                    var tbody = "";
-                    var casesCount = 0;
-                    for(var i in data.Specimens) {
-                        var Specimen = data.Specimens[i];
-                        casesCount++;
-                        tbody +=
-                        "<tr>" +
-                            "<td class=\"specimenId\">" + Specimen.Id + "</td>" +
-                            "<td class=\"blockId\">" + Specimen.BlockId + "</td>" +
-                            "<td class=\"slideId\">" + Specimen.SlideId + "</td>" +
-                            "<td class=\"protocolNumber\">" + Specimen.ProtocolNumber + "</td>" +
-                            "<td class=\"protocolName\">" + Specimen.ProtocolName + "</td>" +
-                            "<td class=\"protocolDescription\">" + Specimen.ProtocolDescription + "</td>" +
-                        "</tr>";
-                    }
-
-                    $('#specimen_view_table tbody').html(tbody);
-
-                    location.hash = 'view-case';
-                },
-                error: function (jqXHR, status) {
-                    // error handler
-                    console.log(jqXHR);
-                    alert('fail: ' + status.code);
-                }
-            });
-        }
-
-        $(document).ready(function() {
-            setTimeout(function() {
-                if(location.hash == '') {
-                    location.hash = 'dashboard';
-                } else {
-                    change_main(location.hash, true);
-                }
-            }, 2000)
-
-            window.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
-                mode: 'text/x-sql',
-                indentWithTabs: true,
-                smartIndent: true,
-                lineNumbers: true,
-                matchBrackets : true,
-                autofocus: true,
-                extraKeys: {"Ctrl-Space": "autocomplete"},
-                theme: 'ambiance',
-                autorefresh: true,
-                hintOptions: {
-                    tables: {
-                        users: ["name", "score", "birthDate"],
-                        countries: ["name", "population", "size"]
-                    }
-                }
-            });
-
-            // setTimeout(function(){
-                
-            // }, 2000)
-
-            $('#add_specimen').click(function(e){
-
-                var proceed = true;
-
-                if(!$.isNumeric($('#BlockId-Prot').val())) {
-                    $('#BlockId-Prot').addClass('is-invalid');
-                    $('#BlockId-Prot').parent().append('<div class="invalid-feedback">BlockId needs to have numeric value</div>');
-                    proceed = false;
-                }
-
-                if(!$.isNumeric($('#ProtocolNumber-Prot').val())) {
-                    $('#ProtocolNumber-Prot').addClass('is-invalid');
-                    $('#ProtocolNumber-Prot').parent().append('<div class="invalid-feedback">ProtocolNumber needs to have numeric value</div>');
-                    proceed = false;
-                }
-
-                if(!$.isNumeric($('#SlideId-Prot').val())) {
-                    $('#SlideId-Prot').addClass('is-invalid');
-                    $('#SlideId-Prot').parent().append('<div class="invalid-feedback">SlideId needs to have numeric value</div>');
-                    proceed = false;
-                }
-
-                if(proceed) {
-                    $('#specimens tbody').append(
-                        "<tr>" +
-                            "<td class=\"specimenId\">" + $('#SpecimenId-Prot').val() + "</td>" +
-                            "<td class=\"blockId\">" + $('#BlockId-Prot').val() + "</td>" +
-                            "<td class=\"slideId\">" + $('#SlideId-Prot').val() + "</td>" +
-                            "<td class=\"protocolNumber\">" + $('#ProtocolNumber-Prot').val() + "</td>" +
-                            "<td class=\"protocolName\">" + $('#ProtocolName-Prot').val() + "</td>" +
-                            "<td class=\"protocolDescription\">" + $('#ProtocolDescription-Prot').val() + "</td>" +
-                            "<td><a class=\"delete\" href=\"#\"><i data-feather=\"delete\"></i></a></td>" +
-                        "</tr>"
-                    );
-                    feather.replace();
-                }
-                e.preventDefault();
-                return false;
-            });
-
-            $('#specimens tbody').on('click', '.delete', function(e) {
-                console.info('Removing Specimen.')
-                $(this).parent().parent().remove();
-                e.preventDefault();
-                return false;
-            });
-
-            $('#save_case').click(function(e) {
-                location.hash = 'loading';
-
-                var patient = {
-                    'accessionID': $('#AccessionID').val(),
-                    'firstName': $('#PatientFirstName-Prot').val(),
-                    'lastName': $('#PatientLastName-Prot').val(),
-                    'patientId': $('#PatientLastName-Prot').val()
-                }
-
-                var requestor = {
-                    'firstName': $('#RequestorFirstName-Prot').val(),
-                    'lastName': $('#RequestorLastName-Prot').val(),
-                    'email': $('#Email').val(),
-                    'mobile': $('#Mobile').val()
-                }
-
-                var specimens = [];
-
-                $('#specimen_table tbody tr').each(function(){
-                    var specimen = {};
-                    $(this).find('td').each(function() {
-                        if($(this).attr('class') != undefined) {
-                            specimen[$(this).attr('class')] = $(this).text();
-                        }
-                    })
-                    specimens.push(specimen);
-                });
-
-                $.ajax({
-                    type: "POST",
-                    url: "/api/v1/Case",
-                    data: JSON.stringify({
-                        'patient': patient,
-                        'requestor': requestor,
-                        'specimens': specimens
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (data, status, jqXHR) {
-                        $('#create-case input').val('');
-                        $('#specimen_table tbody tr').remove();
-                        view_case(data.id)
-                    },
-                    error: function (jqXHR, status) {
-                        // error handler
-                        console.log(jqXHR);
-                        alert('fail' + status.code);
-                    }
-                });
-
-                e.preventDefault();
-                return false;
-            });
-
-            $('#all_cases_table tbody').on('click', '.view_case', function(e) {
-                location.hash = 'loading';
-                view_case($(this).attr('href'));
-                e.preventDefault();
-                return false;
-            })
-
-            $('#all_cases_table tbody').on('click', '.delete_case', function(e) {
-                var $this = $(this);
-                $.ajax({
-                    type: "DELETE",
-                    url: "/api/v1/Case/" + $(this).attr('href'),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (data, status, jqXHR) {
-                        var td = $this.parent().parent();
-                        td.fadeOut(function() {
-                            td.remove();
-                        });
-                    },
-                    error: function (jqXHR, status) {
-                        // error handler
-                        console.log(jqXHR);
-                        alert('fail: ' + status.code);
-                    }
-                });
-
-                e.preventDefault();
-                return false;
-            })
-        })
-
-        $(window).on('hashchange', function(e){
-            console.info("Hash Change.")
-            change_main(location.hash, false)
-        });
-
-
-    </script>
     </body>
 </html>

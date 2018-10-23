@@ -5,13 +5,14 @@ using CaseService.Services.Service;
 using CaseService.Services.Domain;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Cors;
 
-namespace CaseService.Services.Controller
-{
+namespace CaseService.Services.Controller {
+
+    [EnableCors("AllowSpecificOrigin")]
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class CaseController : ControllerBase
-    {
+    public class CaseController : ControllerBase {
 
         private readonly Services.Service.CaseService caseService;
 
@@ -20,8 +21,7 @@ namespace CaseService.Services.Controller
         }
 
         [HttpPost]
-        public Case Post(CreateCaseDTO value)
-        {
+        public Case Post(CreateCaseDTO value) {
             return caseService.createAndPersistAsync(value);
         }
 

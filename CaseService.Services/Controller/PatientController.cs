@@ -5,9 +5,12 @@ using CaseService.Services.Service;
 using CaseService.Services.Domain;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Cors;
 
 namespace CaseService.Services.Controller
 {
+
+    [EnableCors("AllowSpecificOrigin")]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class PatientController : ControllerBase

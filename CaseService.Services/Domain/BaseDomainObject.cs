@@ -9,9 +9,6 @@ namespace CaseService.Services.Domain {
 
         public string GetCollectionName() => cName;
 
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public override string ToString() => JsonConvert.SerializeObject(this);
     }
 }
