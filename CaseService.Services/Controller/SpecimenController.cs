@@ -32,5 +32,11 @@ namespace CaseService.Services.Controller
         [HttpGet]
         public SpecimenDTO GetById(string id) => specimenService.GetById(id);
 
+        [Route("tissue/types")]
+        [HttpGet]
+        public string[] GetTypes() {
+            return TissueType.types;
+        }
+
     }
 }

@@ -38,21 +38,45 @@ namespace CaseService.Services.Service {
 
             List<string> specimenIds = new List<string>();
 
+            
             foreach(CreateSpecimenDTO spDTO in dto.Specimens) {
                 Specimen sp = specimenFactory.create(spDTO);
+                sp.CreatedOn = DateTime.Now;
+
                 Document doc = specimenRepository.Save(sp);
                 specimenIds.Add(specimenFactory.create(doc).Id);
             }
 
-            Document reqDoc = requestorRepository.Save(requestorFactory.create(dto.Requestor));
+            Requestor r = requestorFactory.create(dto.Requestor);
+            r.CreatedOn = DateTime.Now;
+            Document reqDoc = requestorRepository.Save(r);
             Requestor requestor = requestorFactory.create(reqDoc);
-            Patient patient = patientFactory.create(patientRepository.Save(patientFactory.create(dto.Patient)));
+
+
+            Patient p = patientFactory.create(dto.Patient);
+            p.CreatedOn = DateTime.Now;
+
+            p.PatientId = patientRepository.GetCountAsync() + 1;
+            Patient patient = patientFactory.create(patientRepository.Save(p));
 
             result.Specimens = specimenIds;
             result.RequestorId = requestor.Id;
             result.PatientId = patient.Id;
+            result.Type = dto.Type;
+            result.CaseId = CaseType.GetCode(result.Type) + caseRepository.GetCountByTypeAsync(result.Type).ToString().PadLeft(5, '0');
+            result.SetPropertyValue("CreatedOn", DateTime.Now);
+            result.Status = CaseStatus.Open;
 
             caseRepository.Save(result);
+
+            List<Specimen> specimens = specimenRepository.ListAsync(specimenIds).Result;
+
+            int specimenCount = 1;
+            foreach(Specimen sp in specimens) {
+                sp.SetPropertyValue("SpecimenId", result.CaseId + "-" + specimenCount.ToString());
+                specimenRepository.FullUpdate(sp);
+                specimenCount++;
+            }
 
             return result;
         }
@@ -79,6 +103,22 @@ namespace CaseService.Services.Service {
             CaseDTO caseDTO = new CaseDTO();
 
             caseDTO.Id = c.Id;
+            caseDTO.Type = c.Type;
+            caseDTO.CaseId = c.CaseId;
+            caseDTO.CreatedOn = c.CreatedOn;
+            caseDTO.Status = c.Status;
+
+            DateTime closedOn = c.ClosedOn;
+            if(c.ClosedOn == null || c.ClosedOn.Equals(new DateTime())) {
+                closedOn = DateTime.Now;
+            }
+
+
+            TimeSpan span = (closedOn - c.CreatedOn);
+
+            caseDTO.OpenTime = String.Format("{0} days, {1} hours, {2} minutes, {3} seconds", 
+                span.Days, span.Hours, span.Minutes, span.Seconds);
+
 
             try {
                 if(c.RequestorId != null && c.RequestorId != "") {
@@ -130,6 +170,46 @@ namespace CaseService.Services.Service {
             }
 
             caseRepository.DeleteById(id);
+        }
+
+        public Case Close(string id) {
+            Case c = caseFactory.create(caseRepository.findByIdAsync(id).Result);
+            c.Status = CaseStatus.Closed;
+            return caseFactory.create(caseRepository.FullUpdate(c));
+        }
+
+        public int[] GetDailyClosedCountChartData() {
+            int[] result = new int[24];
+
+            DateTime now = DateTime.Now;
+
+            for(int i = 0; i <= 22; i++) {
+                DateTime start = new DateTime(
+                    now.Year,
+                    now.Month,
+                    now.Day,
+                    i,
+                    0,
+                    0,
+                    0,
+                    now.Kind
+                );
+
+                DateTime end = new DateTime(
+                    now.Year, 
+                    now.Month,
+                    now.Day,
+                    i + 1,
+                    0,
+                    0,
+                    0,
+                    now.Kind
+                );
+
+                result[i] = caseRepository.GetClosedCountBetweenDates(start, end);
+            }
+
+            return result;
         }
 
     }

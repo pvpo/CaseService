@@ -15,15 +15,6 @@ namespace CaseService.Services.Factory {
         public Case create(Document doc) {
             Case result = JsonConvert.DeserializeObject<Case>(JsonConvert.SerializeObject(doc));
 
-
-            // result.Id = doc.GetPropertyValue<string>("id");
-            // result.PatientId = doc.GetPropertyValue<string>("PatientId");
-            // result.RequestorId = doc.GetPropertyValue<string>("RequestorId");
-            // result.Specimens = doc.GetPropertyValue<List<string>>("Specimens");
-
-            // Console.WriteLine(doc.GetPropertyValue<string>("id"));
-            // Console.WriteLine(doc.GetPropertyValue<string>("RequestorId"));
-
             return result;
         }
 

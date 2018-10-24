@@ -1,3 +1,4 @@
+using System;
 using Newtonsoft.Json;
 
 namespace CaseService.Services.Domain {
@@ -7,8 +8,8 @@ namespace CaseService.Services.Domain {
 
         public Patient() : base(collectionName) {  }
 
-        [JsonProperty(PropertyName = "AccessionID")]
-        public string AccessionID { get; set; }
+        [JsonProperty(PropertyName = "CreatedOn")]
+        public DateTime CreatedOn { get; set; }
 
         [JsonProperty(PropertyName = "FirstName")]
         public string FirstName { get; set; }
@@ -17,6 +18,9 @@ namespace CaseService.Services.Domain {
         public string LastName { get; set; }
 
         [JsonProperty(PropertyName = "PatientId")]
-        public string PatientId { get; set; }
+        public int PatientId { get; set; }
+
+        [JsonProperty(PropertyName = "Gender")]
+        public string Gender { get; set; }
     }
 }

@@ -33,10 +33,12 @@ namespace CaseService
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddCors(options => {
                 options.AddPolicy("AllowSpecificOrigin",
-                    builder => builder.AllowAnyOrigin()
+                    builder => builder
+                    .AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    .AllowCredentials() );
+                    .AllowCredentials() 
+                );
             });
                 // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>

@@ -4,14 +4,8 @@ namespace CaseService.Services.DTO
 {
     public class CreateSpecimenDTO {
 
-        [JsonProperty(PropertyName = "SpecimenId")]
-        public string SpecimenId { get; set; }
-
         [JsonProperty(PropertyName = "BlockId")]
         public long BlockId { get; set; }
-
-        [JsonProperty(PropertyName = "SlideId")]
-        public long SlideId { get; set; }
 
         [JsonProperty(PropertyName = "ProtocolNumber")]
         public long ProtocolNumber { get; set; }
@@ -21,5 +15,8 @@ namespace CaseService.Services.DTO
 
         [JsonProperty(PropertyName = "ProtocolDescription")]
         public string ProtocolDescription { get; set; }
+
+        [JsonProperty(PropertyName = "TissueType")]
+        public string TissueType { get; set; }
     }
 }

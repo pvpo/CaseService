@@ -25,6 +25,11 @@ namespace CaseService.Services.Controller
         [HttpGet]
         public Task<List<Patient>> GetAll() => patientService.ListAllAsync();
 
+        [HttpGet]
+        [Route("gender/types")]
+        public string[] GetGenderTypes() {
+            return Gender.types;
+        }
 
     }
 }

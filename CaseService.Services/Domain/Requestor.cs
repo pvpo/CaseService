@@ -1,3 +1,4 @@
+using System;
 using Newtonsoft.Json;
 
 namespace CaseService.Services.Domain {
@@ -5,6 +6,9 @@ namespace CaseService.Services.Domain {
 
         public static readonly string collectionName = "Requestor";
         public Requestor() : base(collectionName) {  }
+
+        [JsonProperty(PropertyName = "CreatedOn")]
+        public DateTime CreatedOn { get; set; }
 
         [JsonProperty(PropertyName = "FirstName")]
         public string FirstName { get; set; }

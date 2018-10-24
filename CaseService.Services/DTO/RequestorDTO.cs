@@ -1,9 +1,13 @@
+using System;
 using Newtonsoft.Json;
 
 namespace CaseService.Services.DTO
 {
     public class RequestorDTO {
 
+
+        [JsonProperty(PropertyName = "CreatedOn")]
+        public DateTime CreatedOn { get; set; }
 
         [JsonProperty(PropertyName = "Id")]
         public string Id { get; set; }

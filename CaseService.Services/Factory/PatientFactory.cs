@@ -1,3 +1,4 @@
+using System;
 using CaseService.Services.Domain;
 using CaseService.Services.DTO;
 using Microsoft.Azure.Documents;
