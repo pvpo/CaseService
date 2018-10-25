@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CaseService.Services.Utils;
 using Newtonsoft.Json;
 
 namespace CaseService.Services.Domain {
@@ -30,6 +31,7 @@ namespace CaseService.Services.Domain {
         [JsonProperty(PropertyName = "Status")]
         public string Status { get; set; }
 
+        // [JsonConverter(typeof(EpochDateTimeConverter))]
         [JsonProperty(PropertyName = "ClosedOn")]
         public DateTime ClosedOn { get; set; }
     }

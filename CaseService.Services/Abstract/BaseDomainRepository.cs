@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 namespace CaseService.Services.Abstract.Data {
     public abstract class BaseDomainRepository<T, T1> : SingletonBase<T1> where T : BaseDomainObject where T1 : class {
 
-
         public Document Save(T entity) {
             DocumentClient client = DBInitializer.documentClient;
             DocumentCollection collection = DBInitializer.collections[GetCollectionName()];

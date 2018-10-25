@@ -178,6 +178,35 @@ namespace CaseService.Services.Service {
             return caseFactory.create(caseRepository.FullUpdate(c));
         }
 
+        public int GetTodaysClosedCases() {
+                    DateTime now = DateTime.Now;
+
+                DateTime start = new DateTime(
+                    now.Year,
+                    now.Month,
+                    now.Day,
+                    0,
+                    0,
+                    0,
+                    0,
+                    now.Kind
+                );
+
+                DateTime end = new DateTime(
+                    now.Year, 
+                    now.Month,
+                    now.Day,
+                    23,
+                    0,
+                    0,
+                    0,
+                    now.Kind
+                );
+
+
+            return caseRepository.GetClosedCountBetweenDates(start, end);
+        }
+
         public int[] GetDailyClosedCountChartData() {
             int[] result = new int[24];
 
