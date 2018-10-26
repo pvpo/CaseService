@@ -255,39 +255,7 @@ namespace CaseService.Services.Service {
             return caseRepository.GetClosedCountBetweenDates(start, end);
         }
 
-        public int[] GetDailyClosedCountChartData() {
-            int[] result = new int[24];
 
-            DateTime now = DateTime.Now;
-
-            for(int i = 0; i <= 22; i++) {
-                DateTime start = new DateTime(
-                    now.Year,
-                    now.Month,
-                    now.Day,
-                    i,
-                    0,
-                    0,
-                    0,
-                    now.Kind
-                );
-
-                DateTime end = new DateTime(
-                    now.Year, 
-                    now.Month,
-                    now.Day,
-                    i + 1,
-                    0,
-                    0,
-                    0,
-                    now.Kind
-                );
-
-                result[i] = caseRepository.GetClosedCountBetweenDates(start, end);
-            }
-
-            return result;
-        }
 
     }
 }

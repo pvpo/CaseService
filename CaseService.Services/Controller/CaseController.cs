@@ -73,12 +73,6 @@ namespace CaseService.Services.Controller {
         }
 
         [HttpGet]
-        [Route("stats/closed/daily")]
-        public int[] GetDailyClosedStats() {
-            return caseService.GetDailyClosedCountChartData();
-        }
-
-        [HttpGet]
         [Route("closed/daily")]
         public int GetDailyCLosed(){
             return caseService.GetTodaysClosedCases();
