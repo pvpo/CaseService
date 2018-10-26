@@ -41,10 +41,10 @@ namespace CaseService.Services.Data {
 
             Console.WriteLine(string.Format("SELECT VALUE COUNT(1) FROM c WHERE c.Status = 'Closed' AND (c.ClosedOn <= '{0}' AND c.ClosedOn >= '{1}')", start.ToString("o"), end.ToString("o")));
             Console.WriteLine(JsonConvert.SerializeObject(result));
-            // Console.WriteLine(client.CreateDocumentQuery<Case>(collectionURI, new FeedOptions {
-            //     EnableCrossPartitionQuery = true 
-            //     // AsEnumerable used because a bug in older version of sdk, it does not take into account multiple pages.
-            // }).Where(f => f.Status == CaseStatus.Closed && f.ClosedOn >= start));
+            Console.WriteLine(client.CreateDocumentQuery<Case>(collectionURI, new FeedOptions {
+                EnableCrossPartitionQuery = true 
+                // AsEnumerable used because a bug in older version of sdk, it does not take into account multiple pages.
+            }).Where(f => f.Status == CaseStatus.Closed && f.ClosedOn >= start));
 
             return count;
         }

@@ -20,6 +20,8 @@ namespace CaseService.Services.Service {
         private readonly PatientFactory patientFactory;
         private readonly CaseRepository caseRepository;
         private readonly CaseFactory caseFactory;
+        private readonly SlideFactory slideFactory;
+        private readonly SlideRepository slideRepository;
 
         public CaseService() {
             specimenRepository = SpecimenRepository.Instance;
@@ -30,20 +32,46 @@ namespace CaseService.Services.Service {
             patientFactory = PatientFactory.Instance;
             caseRepository = CaseRepository.Instance;
             caseFactory = CaseFactory.Instance;
+            slideFactory = SlideFactory.Instance;
+            slideRepository = SlideRepository.Instance;
         }
 
 
         public Case createAndPersistAsync(CreateCaseDTO dto) {
             Case result = new Case();
 
+
+
             List<string> specimenIds = new List<string>();
 
             
             foreach(CreateSpecimenDTO spDTO in dto.Specimens) {
+
+
+                List<CreateSlideDTO> slideDTOs = spDTO.Slides;
+                spDTO.Slides = null;
+                List<string> slideIDs = new List<string>();
+
                 Specimen sp = specimenFactory.create(spDTO);
+
+                if(slideDTOs != null) {
+                    foreach(CreateSlideDTO createSlideDTO in slideDTOs) {
+
+                        Slide slide = slideFactory.create(createSlideDTO);
+                        slide.CreatedOn = DateTime.Now;
+                        Document slideDoc = slideRepository.Save(slide);
+                        slideIDs.Add(slideDoc.GetPropertyValue<string>("id"));
+                    }
+                }
+
                 sp.CreatedOn = DateTime.Now;
+                sp.Slides = slideIDs;
+                Console.WriteLine("Spec: " + JsonConvert.SerializeObject(sp));
 
                 Document doc = specimenRepository.Save(sp);
+
+                Console.WriteLine("DOC: " + JsonConvert.SerializeObject(doc));
+
                 specimenIds.Add(specimenFactory.create(doc).Id);
             }
 
@@ -74,6 +102,14 @@ namespace CaseService.Services.Service {
             int specimenCount = 1;
             foreach(Specimen sp in specimens) {
                 sp.SetPropertyValue("SpecimenId", result.CaseId + "-" + specimenCount.ToString());
+                List<Slide> slds = slideRepository.ListAsync(sp.Slides).Result;
+                int slidesCount = 1;
+
+                foreach(Slide s in slds) {
+                    s.SetPropertyValue("SlideId", result.CaseId + "-" + specimenCount.ToString() + "-" + sp.BlockId + "-" + slidesCount);
+                    slideRepository.FullUpdate(s);
+                }
+
                 specimenRepository.FullUpdate(sp);
                 specimenCount++;
             }
@@ -144,7 +180,8 @@ namespace CaseService.Services.Service {
 
             try {
                 if(c.Specimens != null) {
-                    caseDTO.Specimens = specimenFactory.create(specimenRepository.ListAsync(c.Specimens).Result);
+                    List<Specimen> spcis = specimenRepository.ListAsync(c.Specimens).Result;
+                    caseDTO.Specimens = specimenFactory.create(spcis);
                 }
             } catch(DocumentClientException e) {
                 Console.WriteLine(e.Message);
@@ -166,6 +203,16 @@ namespace CaseService.Services.Service {
             patientRepository.DeleteById(c.PatientId);
 
             foreach(string sID in c.Specimens) {
+
+                List<string> slidesIds = specimenFactory.create(specimenRepository.findByIdAsync(sID).Result).Slides;
+                
+                if(slidesIds != null && slidesIds.Count > 0) {
+                    List<Slide> slides = slideRepository.ListAsync(slidesIds).Result;
+                    foreach(Slide s in slides) {
+                        slideRepository.DeleteById(s.Id);
+                    }
+                }
+                
                 specimenRepository.DeleteById(sID);
             }
 
@@ -175,6 +222,7 @@ namespace CaseService.Services.Service {
         public Case Close(string id) {
             Case c = caseFactory.create(caseRepository.findByIdAsync(id).Result);
             c.Status = CaseStatus.Closed;
+            c.ClosedOn = DateTime.Now;
             return caseFactory.create(caseRepository.FullUpdate(c));
         }
 

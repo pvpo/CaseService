@@ -20,6 +20,7 @@ namespace CaseService.Services.Domain
         [JsonProperty(PropertyName = "BlockId")]
         public long BlockId { get; set; }
 
+        [JsonProperty(PropertyName = "Slides")]
         public List<string> Slides { get; set; }
 
     }

@@ -47,6 +47,8 @@ namespace CaseService.Services
             DBInitializer.RegisterDocumentCollection(Requestor.collectionName);
             DBInitializer.RegisterDocumentCollection(Patient.collectionName);
             DBInitializer.RegisterDocumentCollection(Case.collectionName);
+            DBInitializer.RegisterDocumentCollection(Slide.collectionName);
+
         }
     }
 }

@@ -11,7 +11,7 @@ namespace CaseService.Services.DTO
         [JsonProperty(PropertyName = "TissueType")]
         public string TissueType { get; set; }
 
-        [JsonProperty(PropertyName = "slides")]
-        public List<CreateSlideDTO> slides;
+        [JsonProperty(PropertyName = "Slides")]
+        public List<CreateSlideDTO> Slides;
     }
 }
