@@ -48,10 +48,11 @@ namespace CaseService
 
             IServiceProvider provider = services.BuildServiceProvider();
             services.AddSingleton<SpecimenService>(new SpecimenService());
-            services.AddSingleton<Services.Service.CaseService>(new Services.Service.CaseService());
+            services.AddSingleton<Services.Service.CaseService>(Services.Service.CaseService.Instance);
             services.AddSingleton<PatientService>(new PatientService());
             services.AddSingleton<RequestorService>(new RequestorService());
             services.AddSingleton<StatsService>(new StatsService());
+            services.AddSingleton<MessagingService>(new MessagingService());
 
         }
 
@@ -75,7 +76,7 @@ namespace CaseService
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Case registration Service API V1");
             });
 
             app.UseCors("AllowSpecificOrigin");

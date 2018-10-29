@@ -10,7 +10,7 @@ using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
 
 namespace CaseService.Services.Service {
-    public class CaseService {
+    public class CaseService: SingletonBase<CaseService> {
 
         private readonly SpecimenRepository specimenRepository;
         private readonly SpecimenFactory specimenFactory;
